@@ -129,7 +129,7 @@ function BrakeLight () {
     }
     if (input.acceleration(Dimension.Y) < -500) {
         BrakeTimer += 0.05
-        if (BrakeTimer >= 0.5) {
+        if (BrakeTimer >= 0.2) {
             led.plot(2, 2)
             pins.digitalWritePin(DigitalPin.P13, 1)
             basic.pause(100)
