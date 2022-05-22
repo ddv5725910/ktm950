@@ -123,25 +123,21 @@ input.onPinReleased(TouchPin.P1, function () {
     }
 })
 function BrakeLight () {
-    if (input.acceleration(Dimension.Y) > 500) {
+    if (input.acceleration(Dimension.Y) > 300) {
         BrakeEngineShake = true
         BrakeTimer = 0
     }
-    if (input.acceleration(Dimension.Y) < -500) {
-        BrakeTimer += 0.01
+    if (input.acceleration(Dimension.Y) < -300) {
+        BrakeTimer += 0.025
         if (BrakeTimer >= 0.25) {
             led.plot(2, 2)
             pins.digitalWritePin(DigitalPin.P13, 1)
-            pins.digitalWritePin(DigitalPin.P12, 1)
-            pins.digitalWritePin(DigitalPin.P8, 1)
             basic.pause(1000)
         }
     } else {
         led.unplot(2, 2)
         BrakeTimer = 0
         pins.digitalWritePin(DigitalPin.P13, 0)
-        pins.digitalWritePin(DigitalPin.P12, 0)
-        pins.digitalWritePin(DigitalPin.P8, 0)
     }
 }
 let HighBeamTimer = 0
@@ -215,19 +211,19 @@ loops.everyInterval(100, function () {
         pins.digitalWritePin(DigitalPin.P12, 0)
         pins.digitalWritePin(DigitalPin.P8, 1)
         music.playTone(880, music.beat(BeatFraction.Eighth))
-        basic.pause(250)
+        basic.pause(300)
         led.unplot(0, 2)
         pins.digitalWritePin(DigitalPin.P8, 0)
-        basic.pause(250)
+        basic.pause(300)
     }
     if (TurnSignal_L) {
         led.plot(4, 2)
         pins.digitalWritePin(DigitalPin.P8, 0)
         pins.digitalWritePin(DigitalPin.P12, 1)
         music.playTone(880, music.beat(BeatFraction.Eighth))
-        basic.pause(250)
+        basic.pause(300)
         led.unplot(4, 2)
         pins.digitalWritePin(DigitalPin.P12, 0)
-        basic.pause(250)
+        basic.pause(300)
     }
 })
