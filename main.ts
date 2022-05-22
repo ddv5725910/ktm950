@@ -1,3 +1,6 @@
+function Calculate_Turn () {
+	
+}
 input.onPinReleased(TouchPin.P0, function () {
     P0_Pressed = false
     if (P0P1_Pressed) {
@@ -68,9 +71,6 @@ function Initial_Turn () {
     Turn_Angle = input.compassHeading()
     Initial_Angle = Turn_Angle
 }
-function Calculate_Turn () {
-	
-}
 control.onEvent(EventBusSource.MICROBIT_ID_ACCELEROMETER, EventBusValue.MICROBIT_EVT_ANY, function () {
 	
 })
@@ -128,34 +128,20 @@ function BrakeLight () {
         BrakeTimer = 0
     }
     if (input.acceleration(Dimension.Y) < -500) {
-        BrakeTimer += 0.05
-        if (BrakeTimer >= 0.2) {
+        BrakeTimer += 0.01
+        if (BrakeTimer >= 0.25) {
             led.plot(2, 2)
             pins.digitalWritePin(DigitalPin.P13, 1)
-            basic.pause(100)
-            led.unplot(2, 2)
-            pins.digitalWritePin(DigitalPin.P13, 0)
-            basic.pause(100)
-            led.plot(2, 2)
-            pins.digitalWritePin(DigitalPin.P13, 1)
-            basic.pause(100)
-            led.unplot(2, 2)
-            pins.digitalWritePin(DigitalPin.P13, 0)
-            basic.pause(100)
-            led.plot(2, 2)
-            pins.digitalWritePin(DigitalPin.P13, 1)
-            basic.pause(100)
-            led.unplot(2, 2)
-            pins.digitalWritePin(DigitalPin.P13, 0)
-            basic.pause(100)
-            led.plot(2, 2)
-            pins.digitalWritePin(DigitalPin.P13, 1)
-            basic.pause(2000)
+            pins.digitalWritePin(DigitalPin.P12, 1)
+            pins.digitalWritePin(DigitalPin.P8, 1)
+            basic.pause(1000)
         }
     } else {
         led.unplot(2, 2)
         BrakeTimer = 0
         pins.digitalWritePin(DigitalPin.P13, 0)
+        pins.digitalWritePin(DigitalPin.P12, 0)
+        pins.digitalWritePin(DigitalPin.P8, 0)
     }
 }
 let HighBeamTimer = 0
@@ -229,19 +215,19 @@ loops.everyInterval(100, function () {
         pins.digitalWritePin(DigitalPin.P12, 0)
         pins.digitalWritePin(DigitalPin.P8, 1)
         music.playTone(880, music.beat(BeatFraction.Eighth))
-        basic.pause(500)
+        basic.pause(250)
         led.unplot(0, 2)
         pins.digitalWritePin(DigitalPin.P8, 0)
-        basic.pause(500)
+        basic.pause(250)
     }
     if (TurnSignal_L) {
         led.plot(4, 2)
         pins.digitalWritePin(DigitalPin.P8, 0)
         pins.digitalWritePin(DigitalPin.P12, 1)
         music.playTone(880, music.beat(BeatFraction.Eighth))
-        basic.pause(500)
+        basic.pause(250)
         led.unplot(4, 2)
         pins.digitalWritePin(DigitalPin.P12, 0)
-        basic.pause(500)
+        basic.pause(250)
     }
 })
