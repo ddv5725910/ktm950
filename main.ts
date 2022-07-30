@@ -1,6 +1,3 @@
-function Calculate_Turn () {
-	
-}
 input.onPinReleased(TouchPin.P0, function () {
     P0_Pressed = false
     if (P0P1_Pressed) {
@@ -66,14 +63,21 @@ function LowBeam () {
         pins.digitalWritePin(DigitalPin.P14, 0)
     }
 }
+datalogger.onLogFull(function () {
+    logging = false
+})
+input.onButtonPressed(Button.AB, function () {
+    music.playTone(880, music.beat(BeatFraction.Eighth))
+    basic.showIcon(IconNames.No)
+    basic.pause(100)
+    basic.clearScreen()
+    datalogger.deleteLog(datalogger.DeleteType.Full)
+})
 function Initial_Turn () {
     Ready_To_Turn = true
     Turn_Angle = input.compassHeading()
     Initial_Angle = Turn_Angle
 }
-control.onEvent(EventBusSource.MICROBIT_ID_ACCELEROMETER, EventBusValue.MICROBIT_EVT_ANY, function () {
-	
-})
 function HighBeam () {
     if (input.pinIsPressed(TouchPin.P0) && input.pinIsPressed(TouchPin.P1)) {
         HighBeamTimer += 0.05
@@ -159,6 +163,15 @@ let LowBeamOn = false
 let BrakeTimer = 0
 let LowBeamTimer = 0
 let P0P1_Pressed = false
+let logging = false
+logging = true
+datalogger.includeTimestamp(FlashLogTimeStampFormat.Seconds)
+datalogger.setColumnTitles(
+"x",
+"y",
+"z",
+"s"
+)
 music.setVolume(255)
 music.playTone(880, music.beat(BeatFraction.Eighth))
 P0P1_Pressed = false
@@ -206,6 +219,14 @@ basic.forever(function () {
     BrakeLight()
 })
 loops.everyInterval(100, function () {
+    if (logging) {
+        datalogger.log(
+        datalogger.createCV("x", input.acceleration(Dimension.X)),
+        datalogger.createCV("y", input.acceleration(Dimension.Y)),
+        datalogger.createCV("z", input.acceleration(Dimension.Z)),
+        datalogger.createCV("s", input.acceleration(Dimension.Strength))
+        )
+    }
     if (TurnSignal_R) {
         led.plot(0, 2)
         pins.digitalWritePin(DigitalPin.P12, 0)
