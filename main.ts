@@ -66,12 +66,22 @@ function LowBeam () {
 datalogger.onLogFull(function () {
     logging = false
 })
+function LogTester () {
+    if (LowBeamOn) {
+        logging = true
+    } else {
+        logging = false
+    }
+    if (HighBeamOn) {
+        datalogger.deleteLog(datalogger.DeleteType.Full)
+    }
+}
 input.onButtonPressed(Button.AB, function () {
-    music.playTone(880, music.beat(BeatFraction.Eighth))
-    basic.showIcon(IconNames.No)
-    basic.pause(100)
-    basic.clearScreen()
-    datalogger.deleteLog(datalogger.DeleteType.Full)
+    if (logging) {
+        CleanLog()
+    } else {
+        StartLog()
+    }
 })
 function Initial_Turn () {
     Ready_To_Turn = true
@@ -131,7 +141,7 @@ function BrakeLight () {
         BrakeEngineShake = true
         BrakeTimer = 0
     }
-    if (input.acceleration(Dimension.Y) < -300) {
+    if (input.acceleration(Dimension.Y) < -500) {
         BrakeTimer += 0.025
         if (BrakeTimer >= 0.25) {
             led.plot(2, 2)
@@ -143,6 +153,21 @@ function BrakeLight () {
         BrakeTimer = 0
         pins.digitalWritePin(DigitalPin.P13, 0)
     }
+}
+function CleanLog () {
+    music.playTone(880, music.beat(BeatFraction.Eighth))
+    basic.showIcon(IconNames.No)
+    basic.pause(100)
+    basic.clearScreen()
+    logging = false
+    datalogger.deleteLog(datalogger.DeleteType.Full)
+}
+function StartLog () {
+    music.playTone(147, music.beat(BeatFraction.Eighth))
+    basic.showIcon(IconNames.Yes)
+    basic.pause(100)
+    basic.clearScreen()
+    logging = true
 }
 let HighBeamTimer = 0
 let Initial_Angle = 0
@@ -164,14 +189,9 @@ let BrakeTimer = 0
 let LowBeamTimer = 0
 let P0P1_Pressed = false
 let logging = false
-logging = true
+logging = false
 datalogger.includeTimestamp(FlashLogTimeStampFormat.Seconds)
-datalogger.setColumnTitles(
-"x",
-"y",
-"z",
-"s"
-)
+datalogger.setColumnTitles("y")
 music.setVolume(255)
 music.playTone(880, music.beat(BeatFraction.Eighth))
 P0P1_Pressed = false
@@ -218,15 +238,12 @@ basic.forever(function () {
     HighBeam()
     BrakeLight()
 })
-loops.everyInterval(100, function () {
+loops.everyInterval(250, function () {
     if (logging) {
-        datalogger.log(
-        datalogger.createCV("x", input.acceleration(Dimension.X)),
-        datalogger.createCV("y", input.acceleration(Dimension.Y)),
-        datalogger.createCV("z", input.acceleration(Dimension.Z)),
-        datalogger.createCV("s", input.acceleration(Dimension.Strength))
-        )
+        datalogger.log(datalogger.createCV("y", input.acceleration(Dimension.X)))
     }
+})
+loops.everyInterval(100, function () {
     if (TurnSignal_R) {
         led.plot(0, 2)
         pins.digitalWritePin(DigitalPin.P12, 0)
