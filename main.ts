@@ -67,21 +67,10 @@ datalogger.onLogFull(function () {
     logging = false
 })
 function LogTester () {
-    if (LowBeamOn) {
-        logging = true
-    } else {
-        logging = false
-    }
-    if (HighBeamOn) {
-        datalogger.deleteLog(datalogger.DeleteType.Full)
-    }
+    logging = LowBeamOn
 }
 input.onButtonPressed(Button.AB, function () {
-    if (logging) {
-        CleanLog()
-    } else {
-        StartLog()
-    }
+    CleanLog()
 })
 function Initial_Turn () {
     Ready_To_Turn = true
@@ -156,18 +145,11 @@ function BrakeLight () {
 }
 function CleanLog () {
     music.playTone(880, music.beat(BeatFraction.Eighth))
-    basic.showIcon(IconNames.No)
+    basic.showIcon(IconNames.Skull)
     basic.pause(100)
     basic.clearScreen()
     logging = false
     datalogger.deleteLog(datalogger.DeleteType.Full)
-}
-function StartLog () {
-    music.playTone(147, music.beat(BeatFraction.Eighth))
-    basic.showIcon(IconNames.Yes)
-    basic.pause(100)
-    basic.clearScreen()
-    logging = true
 }
 let HighBeamTimer = 0
 let Initial_Angle = 0
@@ -221,6 +203,7 @@ TurnSignal_L = false
 Ready_To_Turn = false
 HighBeamBlink = false
 basic.forever(function () {
+    LogTester()
     if (input.pinIsPressed(TouchPin.P0)) {
         P0_Pressed = true
         if (P1_Pressed) {
