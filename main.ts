@@ -66,6 +66,15 @@ function LowBeam () {
 datalogger.onLogFull(function () {
     logging = false
 })
+function BreakLightTester () {
+    if (BrakeLightOn) {
+        pins.digitalWritePin(DigitalPin.P12, 1)
+        pins.digitalWritePin(DigitalPin.P8, 1)
+    } else {
+        pins.digitalWritePin(DigitalPin.P12, 0)
+        pins.digitalWritePin(DigitalPin.P8, 0)
+    }
+}
 function LogTester () {
     logging = LowBeamOn
 }
@@ -126,21 +135,24 @@ input.onPinReleased(TouchPin.P1, function () {
     }
 })
 function BrakeLight () {
-    if (input.acceleration(Dimension.Y) > 300) {
+    if (input.acceleration(Dimension.Y) > 100) {
         BrakeEngineShake = true
         BrakeTimer = 0
     }
-    if (input.acceleration(Dimension.Y) < -500) {
+    if (input.acceleration(Dimension.Y) < -400) {
         BrakeTimer += 0.025
         if (BrakeTimer >= 0.25) {
             led.plot(2, 2)
             pins.digitalWritePin(DigitalPin.P13, 1)
+            BrakeLightOn = true
+            BreakLightTester()
             basic.pause(1000)
         }
     } else {
         led.unplot(2, 2)
         BrakeTimer = 0
         pins.digitalWritePin(DigitalPin.P13, 0)
+        BrakeLightOn = false
     }
 }
 function CleanLog () {
@@ -154,6 +166,7 @@ function CleanLog () {
 let HighBeamTimer = 0
 let Initial_Angle = 0
 let Turn_Angle = 0
+let BrakeLightOn = false
 let TurnCancelTimer = 0
 let TurnCancelTouched = false
 let P1_Pressed = false
@@ -204,6 +217,7 @@ Ready_To_Turn = false
 HighBeamBlink = false
 basic.forever(function () {
     LogTester()
+    BreakLightTester()
     if (input.pinIsPressed(TouchPin.P0)) {
         P0_Pressed = true
         if (P1_Pressed) {
